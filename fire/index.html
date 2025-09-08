@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html style="background-color:rgba(0,5,24,1)">
+
+<head>
+    <link rel="icon" href="/image/favicon.png"  />
+    <title>宝宝</title>
+    <meta charset="UTF-8">
+    <meta name="language" content="zh-CN">
+    <meta name="title" content="小宝宝">
+    <link rel="icon" href="./a8.png"  />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .city {
+            width: 100%;
+            position: fixed;
+            bottom:
+                0px;
+            z-index: 100;
+        }
+
+        .city img {
+            width: 100%;
+        }
+
+        audio {
+            opacity: 0;
+        }
+    </style>
+    <title>
+        放烟花
+    </title>
+    <link href="./modal.css" rel="stylesheet" />
+    <style>
+      .btn {
+        cursor: pointer;
+      }
+    </style>
+</head>
+
+<body onselectstart="return false" style="background-color:rgba(0,5,24,1)">
+    <!--对话部分-->
+    <div class="share_img">
+      <img src="./a8b.png" alt="">
+    </div>
+
+    <div class="page_one">
+        <div class="content" style="z-index:10">
+            <div class="text_wrapper">
+                <img src="./a8.png" alt="">
+                <div class="text">
+                    宝宝~你愿意和我在一起么~？
+                </div>
+            </div>
+        </div>
+        <div class="btn-groups">
+            <div class="heart-btn">
+                <div id="yes" class="btn btn-a"><span>愿意</span></div>
+            </div>
+            <div id="no" class="btn btn-b"><span>不愿意</span></div>
+        </div>
+    </div>
+    <!--烟花部分-->
+    <canvas id='cas' style="background-color:rgba(0,5,24,1)">
+        浏览器不支持canvas
+    </canvas>
+    <div class="city">
+        <img src="./city.png" alt="" />
+    </div>
+    <img src="./moon.png" alt="" id="moon" style="visibility: hidden;" />
+    <div style="display:none">
+        <div class="shape">
+            谢蕊
+        </div>
+        <div class="shape">
+            我喜欢你
+        </div>
+    </div>
+    <!--音乐部分-->
+    <audio autoplay loop id="music">
+        <source src="./music.mp3" />
+    </audio>
+    <iframe id="iframMusic" allow="autoplay" style="display:none" src="blank.mp3"></iframe>
+    <script src="/js/jquery.min.js"></script>
+    <script src="./fire.js"></script>
+    <script src="./talk.js"></script>
+</body>
+
+</html>

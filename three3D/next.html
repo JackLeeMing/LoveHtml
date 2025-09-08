@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Three.js 立方体六面贴图</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background: #000;
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+            }
+            #info {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                color: white;
+                z-index: 100;
+                background: rgba(0, 0, 0, 0.7);
+                padding: 10px;
+                border-radius: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="info">
+            <h3>立方体六面贴图示例</h3>
+            <p>每个面都有不同颜色的纹理</p>
+            <p>鼠标拖拽旋转视角</p>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script>
+            // 创建场景、相机和渲染器
+            const scene = new THREE.Scene()
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+            const renderer = new THREE.WebGLRenderer({ antialias: true })
+            renderer.setSize(window.innerWidth, window.innerHeight)
+            renderer.setClearColor(0x222222)
+            document.body.appendChild(renderer.domElement)
+
+            // 创建六种不同颜色的canvas纹理
+            function createColorTexture(color, text) {
+                const canvas = document.createElement('canvas')
+                canvas.width = 256
+                canvas.height = 256
+                const ctx = canvas.getContext('2d')
+
+                // 填充背景色
+                ctx.fillStyle = color
+                ctx.fillRect(0, 0, 256, 256)
+
+                // 添加文字
+                ctx.fillStyle = '#ffffff'
+                ctx.font = 'bold 24px Arial'
+                ctx.textAlign = 'center'
+                ctx.textBaseline = 'middle'
+                ctx.fillText(text, 128, 128)
+
+                // 添加边框
+                ctx.strokeStyle = '#ffffff'
+                ctx.lineWidth = 4
+                ctx.strokeRect(0, 0, 256, 256)
+
+                return new THREE.CanvasTexture(canvas)
+            }
+
+            // 创建六个不同的纹理
+            const textures = [
+                createColorTexture('#ff4444', '右面 (+X)'), // 红色 - 右面
+                createColorTexture('#44ff44', '左面 (-X)'), // 绿色 - 左面
+                createColorTexture('#4444ff', '上面 (+Y)'), // 蓝色 - 上面
+                createColorTexture('#ffff44', '下面 (-Y)'), // 黄色 - 下面
+                createColorTexture('#ff44ff', '前面 (+Z)'), // 紫色 - 前面
+                createColorTexture('#44ffff', '后面 (-Z)'), // 青色 - 后面
+            ]
+
+            // 创建材质数组
+            const materials = textures.map((texture) => new THREE.MeshBasicMaterial({ map: texture }))
+
+            // 创建立方体几何体和网格
+            const geometry = new THREE.BoxGeometry(2, 2, 2)
+            const cube = new THREE.Mesh(geometry, materials)
+            scene.add(cube)
+
+            // 设置相机位置
+            camera.position.set(3, 3, 3)
+            camera.lookAt(0, 0, 0)
+
+            // 添加鼠标控制
+            let isDragging = false
+            let previousMousePosition = {
+                x: 0,
+                y: 0,
+            }
+
+            renderer.domElement.addEventListener('mousedown', function (e) {
+                isDragging = true
+                previousMousePosition = {
+                    x: e.clientX,
+                    y: e.clientY,
+                }
+            })
+
+            renderer.domElement.addEventListener('mousemove', function (e) {
+                if (isDragging) {
+                    const deltaMove = {
+                        x: e.clientX - previousMousePosition.x,
+                        y: e.clientY - previousMousePosition.y,
+                    }
+
+                    const deltaRotationQuaternion = new THREE.Quaternion().setFromEuler(
+                        new THREE.Euler(deltaMove.y * 0.01, deltaMove.x * 0.01, 0, 'XYZ')
+                    )
+
+                    cube.quaternion.multiplyQuaternions(deltaRotationQuaternion, cube.quaternion)
+
+                    previousMousePosition = {
+                        x: e.clientX,
+                        y: e.clientY,
+                    }
+                }
+            })
+
+            renderer.domElement.addEventListener('mouseup', function (e) {
+                isDragging = false
+            })
+
+            // 自动旋转动画
+            function animate() {
+                requestAnimationFrame(animate)
+
+                // 缓慢自动旋转
+                if (!isDragging) {
+                    cube.rotation.x += 0.005
+                    cube.rotation.y += 0.01
+                }
+
+                renderer.render(scene, camera)
+            }
+
+            // 处理窗口大小改变
+            window.addEventListener('resize', function () {
+                camera.aspect = window.innerWidth / window.innerHeight
+                camera.updateProjectionMatrix()
+                renderer.setSize(window.innerWidth, window.innerHeight)
+            })
+
+            // 开始渲染循环
+            animate()
+        </script>
+    </body>
+</html>
